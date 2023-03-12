@@ -32,7 +32,99 @@ namespace DailyWorkoutTracker.API.Repositories
         public async Task<IEnumerable<Exercise>> GetExercisesAsync()
         {
             //return await _context.Exercises.ToListAsync();
-            return await Task.Run(() => new List<Exercise>());
+            var exercises = new List<Exercise>
+            {
+                new Exercise
+                {
+                    Id = 1,
+                    Name = "Bench Press",
+                    Description = "Lay on a bench and press a barbell up and down",
+                    MuscleGroups = new List<MuscleGroup>
+                    {
+                        new MuscleGroup
+                        {
+                            Id = 1,
+                            Name = "Chest",
+                            Description = "Chest muscles"
+                        }
+                    },
+                    Equipment = new List<Equipment>
+                    {
+                        new Equipment
+                        {
+                            Id = 1,
+                            Name = "Barbell",
+                            Description = "Barbell"
+                        }
+                    }
+                },
+                new Exercise
+                {
+                    Id = 2,
+                    Name = "Squat",
+                    Description = "Stand up straight and squat down",
+
+                    MuscleGroups = new List<MuscleGroup>
+                    {
+                        new MuscleGroup
+                        {
+                            Id = 2,
+                            Name = "Legs",
+                            Description = "Leg muscles"
+                        }
+                    },
+                    Equipment = new List<Equipment>
+                    {
+                        new Equipment
+                        {
+                            Id = 2,
+                            Name = "Barbell",
+                            Description = "Barbell"
+                        }
+                    }
+                },
+                new Exercise
+                {
+                    Id = 3,
+                    Name = "Deadlift",
+                    Description = "Stand up straight and lift a barbell off the ground",                    
+                    MuscleGroups = new List<MuscleGroup>
+                    {
+                        new MuscleGroup
+                        {
+                            Id = 2,
+                            Name = "Legs",
+                            Description = "Leg muscles"
+                        }
+                    },
+                },
+                new Exercise
+                {
+                    Id = 4,
+                    Name = "Bicep Curl",
+                    Description = "Stand up straight and curl a barbell up and down",
+                    MuscleGroups = new List<MuscleGroup>
+                    {
+                        new MuscleGroup
+                        {
+                            Id = 3,
+                            Name = "Arms",
+                            Description = "Arm muscles"
+                        }
+                    },
+                    Equipment = new List<Equipment>
+                    {
+                        new Equipment
+                        {
+                            Id = 1,
+                            Name = "Barbell",
+                            Description = "Barbell"
+                        }
+                    }                
+                }
+            };
+
+            return await Task.Run(() => exercises);
         }
 
         public async Task<Exercise> GetExerciseByIdAsync(int id)

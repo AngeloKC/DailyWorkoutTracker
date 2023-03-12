@@ -42,42 +42,14 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-// add exercise endpoint
 app.MapGet("/exercise", () =>
 {
     var exercises = new List<Exercise>();
 
-    var exercise = new Exercise
-    {
-        Id = 1,
-        Name = "Bench Press",
-        Description = "Lay on a bench and press a barbell up and down",
-        MuscleGroups = new List<MuscleGroup>
-        {
-            new MuscleGroup
-            {
-                Id = 1,
-                Name = "Chest",
-                Description = "Chest muscles"
-            }
-        },
-        Equipment = new List<Equipment>
-        {
-            new Equipment 
-            {
-                Id = 1,
-                Name = "Barbell",
-                Description = "Barbell"
-            }            
-        }
-    };
+    var exerciseRepository = app.Services.GetRequiredService<IExerciseRepository>();
 
-    exercises.Add(exercise);
-
-    return exercises;
-
+    return exerciseRepository.GetExercisesAsync();
 });
-
 
 app.Run();
 
