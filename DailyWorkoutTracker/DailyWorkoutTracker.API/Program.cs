@@ -1,9 +1,15 @@
+using DailyWorkoutTracker.API.Models;
+using DailyWorkoutTracker.API.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddTransient<DailyWorkoutTrackerContext>();
+builder.Services.AddTransient<IExerciseRepository, ExerciseRepository>();
 
 var app = builder.Build();
 
@@ -35,6 +41,43 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+// add exercise endpoint
+app.MapGet("/exercise", () =>
+{
+    var exercises = new List<Exercise>();
+
+    var exercise = new Exercise
+    {
+        Id = 1,
+        Name = "Bench Press",
+        Description = "Lay on a bench and press a barbell up and down",
+        MuscleGroups = new List<MuscleGroup>
+        {
+            new MuscleGroup
+            {
+                Id = 1,
+                Name = "Chest",
+                Description = "Chest muscles"
+            }
+        },
+        Equipment = new List<Equipment>
+        {
+            new Equipment 
+            {
+                Id = 1,
+                Name = "Barbell",
+                Description = "Barbell"
+            }            
+        }
+    };
+
+    exercises.Add(exercise);
+
+    return exercises;
+
+});
+
 
 app.Run();
 
