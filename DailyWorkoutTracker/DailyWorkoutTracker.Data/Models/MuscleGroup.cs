@@ -1,4 +1,4 @@
-﻿namespace DailyWorkoutTracker.API.Models
+﻿namespace DailyWorkoutTracker.Data.Models
 {
     public class MuscleGroup
     {

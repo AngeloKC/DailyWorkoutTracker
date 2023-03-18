@@ -15,4 +15,8 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DailyWorkoutTracker.ResourceAccess\DailyWorkoutTracker.ResourceAccess.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
-﻿namespace DailyWorkoutTracker.API.Models
+﻿namespace DailyWorkoutTracker.ResourceAccess.Models
 {
-    public class Exercise
+    public class Exercise : AuditableEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

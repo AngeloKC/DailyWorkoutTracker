@@ -1,8 +1,9 @@
-﻿using DailyWorkoutTracker.API.Models;
+﻿using DailyWorkoutTracker.ResourceAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace DailyWorkoutTracker.API.Repositories
+namespace DailyWorkoutTracker.ResourceAccess.Repositories
 {
-    internal class ExerciseRepository : IExerciseRepository
+    public class ExerciseRepository : IExerciseRepository
     {
         private readonly DailyWorkoutTrackerContext _context;
 
@@ -13,37 +14,70 @@ namespace DailyWorkoutTracker.API.Repositories
 
         public async Task<Exercise> CreateExerciseAsync(Exercise exercise)
         {
-            //await _context.Exercises.AddAsync(exercise);
-            //await _context.SaveChangesAsync();
-            //return exercise;
-            return await Task.Run(() => new Exercise());
+            await _context.Exercises.AddAsync(exercise);
+            await _context.SaveChangesAsync();
+            
+            return exercise;            
         }
 
         public async Task DeleteExerciseAsync(int id)
         {
-            //var exercise = await _context.Exercises.FindAsync(id);
-            //_context.Exercises.Remove(exercise);
-            //await _context.SaveChangesAsync();
+            var exercise = await _context.Exercises.FindAsync(id);
 
-
-            await Task.Run(() => new Exercise());   
+            if (exercise != null)
+            {
+                _context.Exercises.Remove(exercise);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<IEnumerable<Exercise>> GetExercisesAsync()
         {
-            //return await _context.Exercises.ToListAsync();
-            var exercises = new List<Exercise>
+            return await _context.Exercises.ToListAsync();
+        }
+
+        public async Task<Exercise> GetExerciseByIdAsync(int id)
+        {
+            return await _context.Exercises.FindAsync(id);
+        }
+
+        public async Task<Exercise> GetExerciseByNameAsync(string name)
+        {
+            return await _context.Exercises.FirstOrDefaultAsync(e => e.Name == name);
+        }
+
+        public async Task<Exercise> UpdateExerciseAsync(Exercise exercise)
+        {
+            _context.Exercises.Update(exercise);
+
+            await _context.SaveChangesAsync();
+
+            return exercise;
+        }
+
+        public async Task SeedExercises()
+        {
+            if (!_context.Exercises.Any())
+            {
+                var  exercises = GenerateExercises();
+
+                await _context.Exercises.AddRangeAsync(exercises);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private List<Exercise> GenerateExercises()
+        {
+            return new List<Exercise>
             {
                 new Exercise
                 {
-                    Id = 1,
                     Name = "Bench Press",
                     Description = "Lay on a bench and press a barbell up and down",
                     MuscleGroups = new List<MuscleGroup>
                     {
                         new MuscleGroup
                         {
-                            Id = 1,
                             Name = "Chest",
                             Description = "Chest muscles"
                         }
@@ -52,7 +86,6 @@ namespace DailyWorkoutTracker.API.Repositories
                     {
                         new Equipment
                         {
-                            Id = 1,
                             Name = "Barbell",
                             Description = "Barbell"
                         }
@@ -60,7 +93,6 @@ namespace DailyWorkoutTracker.API.Repositories
                 },
                 new Exercise
                 {
-                    Id = 2,
                     Name = "Squat",
                     Description = "Stand up straight and squat down",
 
@@ -68,7 +100,6 @@ namespace DailyWorkoutTracker.API.Repositories
                     {
                         new MuscleGroup
                         {
-                            Id = 2,
                             Name = "Legs",
                             Description = "Leg muscles"
                         }
@@ -77,7 +108,6 @@ namespace DailyWorkoutTracker.API.Repositories
                     {
                         new Equipment
                         {
-                            Id = 2,
                             Name = "Barbell",
                             Description = "Barbell"
                         }
@@ -85,14 +115,12 @@ namespace DailyWorkoutTracker.API.Repositories
                 },
                 new Exercise
                 {
-                    Id = 3,
                     Name = "Deadlift",
-                    Description = "Stand up straight and lift a barbell off the ground",                    
+                    Description = "Stand up straight and lift a barbell off the ground",
                     MuscleGroups = new List<MuscleGroup>
                     {
                         new MuscleGroup
                         {
-                            Id = 2,
                             Name = "Legs",
                             Description = "Leg muscles"
                         }
@@ -100,14 +128,12 @@ namespace DailyWorkoutTracker.API.Repositories
                 },
                 new Exercise
                 {
-                    Id = 4,
                     Name = "Bicep Curl",
                     Description = "Stand up straight and curl a barbell up and down",
                     MuscleGroups = new List<MuscleGroup>
                     {
                         new MuscleGroup
                         {
-                            Id = 3,
                             Name = "Arms",
                             Description = "Arm muscles"
                         }
@@ -116,35 +142,12 @@ namespace DailyWorkoutTracker.API.Repositories
                     {
                         new Equipment
                         {
-                            Id = 1,
                             Name = "Barbell",
                             Description = "Barbell"
                         }
-                    }                
+                    }
                 }
             };
-
-            return await Task.Run(() => exercises);
-        }
-
-        public async Task<Exercise> GetExerciseByIdAsync(int id)
-        {
-            //return await _context.Exercises.FindAsync(id);
-            return await Task.Run(() => new Exercise());
-        }
-
-        public async Task<Exercise> GetExerciseByNameAsync(string name)
-        {
-            //return await _context.Exercises.FirstOrDefaultAsync(e => e.Name == name);
-            return await Task.Run(() => new Exercise());
-        }
-
-        public async Task<Exercise> UpdateExerciseAsync(Exercise exercise)
-        {
-            //_context.Exercises.Update(exercise);
-            //await _context.SaveChangesAsync();
-            //return exercise;
-            return await Task.Run(() => new Exercise());
         }
     }
 }

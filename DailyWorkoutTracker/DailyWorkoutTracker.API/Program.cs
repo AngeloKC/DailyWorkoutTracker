@@ -1,5 +1,6 @@
-using DailyWorkoutTracker.API.Models;
-using DailyWorkoutTracker.API.Repositories;
+using DailyWorkoutTracker.ResourceAccess;
+using DailyWorkoutTracker.ResourceAccess.Models;
+using DailyWorkoutTracker.ResourceAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,11 +45,16 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapGet("/exercise", () =>
 {
-    var exercises = new List<Exercise>();
-
     var exerciseRepository = app.Services.GetRequiredService<IExerciseRepository>();
 
     return exerciseRepository.GetExercisesAsync();
+});
+
+app.MapPost("/exercise/seed", () =>
+{
+    var exerciseRepository = app.Services.GetRequiredService<IExerciseRepository>();
+
+    return exerciseRepository.SeedExercises();
 });
 
 app.Run();

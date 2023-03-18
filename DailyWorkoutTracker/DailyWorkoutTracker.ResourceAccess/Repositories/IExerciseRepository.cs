@@ -1,6 +1,6 @@
-﻿using DailyWorkoutTracker.API.Models;
+﻿using DailyWorkoutTracker.ResourceAccess.Models;
 
-namespace DailyWorkoutTracker.API.Repositories
+namespace DailyWorkoutTracker.ResourceAccess.Repositories
 {
     public interface IExerciseRepository
     {
@@ -9,6 +9,7 @@ namespace DailyWorkoutTracker.API.Repositories
         Task<Exercise> GetExerciseByNameAsync(string name);
         Task<Exercise> CreateExerciseAsync(Exercise exercise);
         Task<Exercise> UpdateExerciseAsync(Exercise exercise);
-        Task DeleteExerciseAsync(int id);       
+        Task DeleteExerciseAsync(int id);
+        Task SeedExercises();
     }
 }
