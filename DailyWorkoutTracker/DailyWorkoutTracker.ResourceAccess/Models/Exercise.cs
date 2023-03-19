@@ -7,5 +7,7 @@
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public virtual ICollection<ExerciseMuscleGroup>? ExerciseMuscleGroups { get; set; }
+        public virtual ICollection<ExerciseEquipment>? ExerciseEquipments { get; set; }
+        public virtual ICollection<ExerciseCategory>? ExerciseCategories { get; set; }
     }
 }

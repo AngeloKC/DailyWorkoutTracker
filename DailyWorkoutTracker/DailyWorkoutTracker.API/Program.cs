@@ -1,11 +1,11 @@
-using DailyWorkoutTracker.API.Representations;
 using DailyWorkoutTracker.ResourceAccess;
-using DailyWorkoutTracker.ResourceAccess.Models;
-using DailyWorkoutTracker.ResourceAccess.Repositories;
-using System.Linq;
+using DailyWorkoutTracker.ResourceAccess.Repositories.Abstractions;
+using DailyWorkoutTracker.ResourceAccess.Repositories.Implementations;
+using Category = DailyWorkoutTracker.API.Representations.Category;
 using Equipment = DailyWorkoutTracker.API.Representations.Equipment;
 using Exercise = DailyWorkoutTracker.API.Representations.Exercise;
 using MuscleGroup = DailyWorkoutTracker.API.Representations.MuscleGroup;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +16,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<DailyWorkoutTrackerContext>();
 builder.Services.AddTransient<IExerciseRepository, ExerciseRepository>();
+builder.Services.AddTransient<IMuscleGroupRepository, MuscleGroupRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IEquipmentRespository, EquipmentRepository>();
 
 var app = builder.Build();
 
@@ -28,30 +31,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
 app.MapGet("/exercises", async () =>
 {
     var exerciseRepository = app.Services.GetRequiredService<IExerciseRepository>();
-
     var exercises = await exerciseRepository.GetAsync();
 
     return exercises
@@ -68,22 +50,78 @@ app.MapGet("/exercises", async () =>
                 ImageUrl = mg.MuscleGroup?.ImageUrl
 
             }).ToArray(),
-            Equipment = null,
+            Equipment = e.ExerciseEquipments?.Select(eq => new Equipment
+            {
+                Id = eq.EquipmentId,
+                Name = eq.Equipment?.Name,
+                Description = eq.Equipment?.Description
+            }).ToArray(),
+            Category = e.ExerciseCategories?.Select(eq => new Category
+            {
+                Id = eq.CategoryId,
+                Name = eq.Category?.Name,
+                Description = eq.Category?.Description
+            }).ToArray(),
             ImageUrl = e.ImageUrl
         })
         .ToArray();
-});
+})
+.WithName("GetExercises")
+.WithOpenApi();
 
-app.MapPost("/exercises/seed", () =>
+app.MapPost("/exercises/seed", async () =>
 {
     var exerciseRepository = app.Services.GetRequiredService<IExerciseRepository>();
 
-    return exerciseRepository.Seed();
-});
+    await exerciseRepository.Seed();
+})
+.WithName("SeedExercises")
+.WithOpenApi();
+
+app.MapPost("/categories/", async () =>
+{
+    var categoryRepository = app.Services.GetRequiredService<ICategoryRepository>();
+    var categories = await categoryRepository.GetAsync();
+
+    return categories.Select(c => new Category
+    {
+        Id = c.Id,
+        Name = c.Name,
+        Description = c.Description
+    });
+
+})
+.WithName("GetCategories")
+.WithOpenApi();
+
+app.MapPost("/equipment/", async () =>
+{
+    var equipmentRepository = app.Services.GetRequiredService<IEquipmentRespository>();
+    var equipment = await equipmentRepository.GetAsync();
+
+    return equipment.Select(e => new Equipment
+    {
+        Id = e.Id,
+        Name = e.Name,
+        Description = e.Description
+    });
+})
+.WithName("GetEquipment")
+.WithOpenApi();
+
+app.MapPost("/musclegroup/", async () =>
+{
+    var muscleGroupRepository = app.Services.GetRequiredService<IMuscleGroupRepository>();
+    var muscleGroups = await muscleGroupRepository.GetAsync();
+
+    return muscleGroups.Select(mg => new MuscleGroup
+    {
+        Id = mg.Id,
+        Name = mg.Name,
+        Description = mg.Description
+    });
+})
+.WithName("GetMuscleGroup")
+.WithOpenApi();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
