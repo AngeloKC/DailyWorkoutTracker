@@ -1,6 +1,11 @@
+using DailyWorkoutTracker.API.Representations;
 using DailyWorkoutTracker.ResourceAccess;
 using DailyWorkoutTracker.ResourceAccess.Models;
 using DailyWorkoutTracker.ResourceAccess.Repositories;
+using System.Linq;
+using Equipment = DailyWorkoutTracker.API.Representations.Equipment;
+using Exercise = DailyWorkoutTracker.API.Representations.Exercise;
+using MuscleGroup = DailyWorkoutTracker.API.Representations.MuscleGroup;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,18 +48,37 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.MapGet("/exercise", () =>
+app.MapGet("/exercises", async () =>
 {
     var exerciseRepository = app.Services.GetRequiredService<IExerciseRepository>();
 
-    return exerciseRepository.GetExercisesAsync();
+    var exercises = await exerciseRepository.GetAsync();
+
+    return exercises
+        .Select(e => new Exercise
+        {
+            Id = e.Id,
+            Name = e.Name,
+            Description = e.Description,
+            MuscleGroups = e.ExerciseMuscleGroups?.Select(mg => new MuscleGroup
+            {
+                Id = mg.MuscleGroupId,
+                Name = mg.MuscleGroup?.Name,
+                Description = mg.MuscleGroup?.Description,
+                ImageUrl = mg.MuscleGroup?.ImageUrl
+
+            }).ToArray(),
+            Equipment = null,
+            ImageUrl = e.ImageUrl
+        })
+        .ToArray();
 });
 
-app.MapPost("/exercise/seed", () =>
+app.MapPost("/exercises/seed", () =>
 {
     var exerciseRepository = app.Services.GetRequiredService<IExerciseRepository>();
 
-    return exerciseRepository.SeedExercises();
+    return exerciseRepository.Seed();
 });
 
 app.Run();

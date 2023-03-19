@@ -3,6 +3,7 @@ using System;
 using DailyWorkoutTracker.ResourceAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DailyWorkoutTracker.ResourceAccess.Migrations
 {
     [DbContext(typeof(DailyWorkoutTrackerContext))]
-    partial class DailyWorkoutTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20230319051404_Removing2WayRelationship")]
+    partial class Removing2WayRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -73,10 +76,15 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("MuscleGroupId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MuscleGroupId");
 
                     b.ToTable("Exercises");
                 });
@@ -130,10 +138,19 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                     b.ToTable("MuscleGroups");
                 });
 
+            modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.Exercise", b =>
+                {
+                    b.HasOne("DailyWorkoutTracker.ResourceAccess.Models.MuscleGroup", "MuscleGroup")
+                        .WithMany()
+                        .HasForeignKey("MuscleGroupId");
+
+                    b.Navigation("MuscleGroup");
+                });
+
             modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.ExerciseMuscleGroup", b =>
                 {
                     b.HasOne("DailyWorkoutTracker.ResourceAccess.Models.Exercise", "Exercise")
-                        .WithMany("ExerciseMuscleGroups")
+                        .WithMany()
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -147,11 +164,6 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                     b.Navigation("Exercise");
 
                     b.Navigation("MuscleGroup");
-                });
-
-            modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.Exercise", b =>
-                {
-                    b.Navigation("ExerciseMuscleGroups");
                 });
 
             modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.MuscleGroup", b =>

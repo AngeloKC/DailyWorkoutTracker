@@ -1,8 +1,7 @@
 ﻿namespace DailyWorkoutTracker.ResourceAccess.Models
 {
-    public class ExerciseMuscleGroup : AuditableEntity
+    public class ExerciseMuscleGroup
     {
-        public int Id { get; set; }
         public int ExerciseId { get; set; }
         public Exercise Exercise { get; set; }
         public int MuscleGroupId { get; set; }

@@ -3,6 +3,7 @@ using System;
 using DailyWorkoutTracker.ResourceAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DailyWorkoutTracker.ResourceAccess.Migrations
 {
     [DbContext(typeof(DailyWorkoutTrackerContext))]
-    partial class DailyWorkoutTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20230319050208_ExperementingWithSchema")]
+    partial class ExperementingWithSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");

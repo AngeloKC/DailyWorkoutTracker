@@ -3,6 +3,7 @@ using System;
 using DailyWorkoutTracker.ResourceAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DailyWorkoutTracker.ResourceAccess.Migrations
 {
     [DbContext(typeof(DailyWorkoutTrackerContext))]
-    partial class DailyWorkoutTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20230319034612_UpdatingNullableFields")]
+    partial class UpdatingNullableFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -24,7 +27,6 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
@@ -32,6 +34,9 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("ExerciseId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("TEXT");
@@ -45,6 +50,8 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExerciseId");
+
                     b.ToTable("Equipments");
                 });
 
@@ -55,7 +62,6 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
@@ -83,17 +89,35 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
 
             modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.ExerciseMuscleGroup", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("ExerciseId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("MuscleGroupId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ExerciseId", "MuscleGroupId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
 
                     b.HasIndex("MuscleGroupId");
 
-                    b.ToTable("ExerciseMuscleGroups");
+                    b.ToTable("ExcerciseMuscleGroups");
                 });
 
             modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.MuscleGroup", b =>
@@ -103,7 +127,6 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
@@ -112,8 +135,8 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ExerciseId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("TEXT");
@@ -127,19 +150,28 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExerciseId");
+
                     b.ToTable("MuscleGroups");
+                });
+
+            modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.Equipment", b =>
+                {
+                    b.HasOne("DailyWorkoutTracker.ResourceAccess.Models.Exercise", null)
+                        .WithMany("Equipment")
+                        .HasForeignKey("ExerciseId");
                 });
 
             modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.ExerciseMuscleGroup", b =>
                 {
                     b.HasOne("DailyWorkoutTracker.ResourceAccess.Models.Exercise", "Exercise")
-                        .WithMany("ExerciseMuscleGroups")
+                        .WithMany()
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DailyWorkoutTracker.ResourceAccess.Models.MuscleGroup", "MuscleGroup")
-                        .WithMany("ExerciseMuscleGroups")
+                        .WithMany()
                         .HasForeignKey("MuscleGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -149,14 +181,18 @@ namespace DailyWorkoutTracker.ResourceAccess.Migrations
                     b.Navigation("MuscleGroup");
                 });
 
-            modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.Exercise", b =>
-                {
-                    b.Navigation("ExerciseMuscleGroups");
-                });
-
             modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.MuscleGroup", b =>
                 {
-                    b.Navigation("ExerciseMuscleGroups");
+                    b.HasOne("DailyWorkoutTracker.ResourceAccess.Models.Exercise", null)
+                        .WithMany("MuscleGroups")
+                        .HasForeignKey("ExerciseId");
+                });
+
+            modelBuilder.Entity("DailyWorkoutTracker.ResourceAccess.Models.Exercise", b =>
+                {
+                    b.Navigation("Equipment");
+
+                    b.Navigation("MuscleGroups");
                 });
 #pragma warning restore 612, 618
         }
