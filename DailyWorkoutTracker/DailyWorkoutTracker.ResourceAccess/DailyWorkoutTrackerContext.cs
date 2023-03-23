@@ -63,7 +63,6 @@ namespace DailyWorkoutTracker.ResourceAccess
                 .HasForeignKey(c => c.EquipmentId);
         }
 
-
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite($"Data Source={DbPath}");
     }

@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DailyWorkoutTracker.ResourceAccess.Repositories.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyWorkoutTracker.ResourceAccess.Repositories
 {
-    public abstract class BaseRepository<T> where T : class
+    public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         protected readonly DailyWorkoutTrackerContext _context;
 
@@ -38,13 +39,13 @@ namespace DailyWorkoutTracker.ResourceAccess.Repositories
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> UpdateAsync(T entity)
-        {
-            _context.Set<T>().Update(entity);
+            public async Task<T> UpdateAsync(T entity)
+            {
+                _context.Set<T>().Update(entity);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return entity;
-        }
+                return entity;
+            }
     }
 }

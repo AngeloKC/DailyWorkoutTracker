@@ -1,7 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-
-namespace DailyWorkoutTracker.ResourceAccess.Models
+﻿namespace DailyWorkoutTracker.ResourceAccess.Models
 {
     public abstract class AuditableEntity
     {
